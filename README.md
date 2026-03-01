@@ -1,97 +1,106 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Agendat-react-frontend
 
-# Getting Started
+Autors:
+* Jordi Abelló --- jordi.abello.sunyer@estudiantat.upc.edu
+* Àngela Buxó --- angela.buxo@estudiantat.upc.edu
+* Noel Freire --- noel.freire@estudiantat.upc.edu
+* Sergi Galan --- sergi.galan.soler@estudiantat.upc.edu
+* Paula Mas --- paula.mas.pascual@estudiantat.upc.edu
+* Pol Montanera --- pol.montanera@estudiantat.upc.edu
+* Víctor Rocha --- victor.rocha@estudiantat.upc.edu
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Aquest repositori conté l'aplicació mòbil desenvolupada amb **React Native**. Per mantenir la qualitat del codi i evitar errors comuns, utilitzem un sistema de **Pre-commit Hooks**.
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📋 Requisits Previs
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+Abans de configurar el projecte, és imprescindible tenir instal·lades aquestes eines al sistema operatiu:
 
-```sh
-# Using npm
-npm start
+### 1. Node.js (Motor de JS)
+* Descarrega la versió **LTS** a [nodejs.org](https://nodejs.org/).
+* Verifica la instal·lació: `node -v` i `npm -v`.
 
-# OR using Yarn
-yarn start
+### 2. Python (Gestor de Qualitat)
+* **⚠️ ATENCIÓ:** No instal·lis Python des de la Microsoft Store.
+* Descarrega l'instal·lador oficial a [Python.org](https://www.python.org/downloads/).
+* **Molt important:** Activa la casella **"Add Python to PATH"** durant la instal·lació.
+* Si ja el tens instal·lat i no et funciona, assegura't que les rutes de Python estiguin al capdamunt de les teves *Variables d'Entorn*.
+
+### 3. Watchman (Només per a macOS)
+* Executa: `brew install watchman`
+
+---
+
+## 🛠️ Configuració del Projecte
+
+Segueix aquests passos per posar el teu entorn a punt:
+
+1. **Instal·la les dependències de Node:**
+   ```bash
+   npm install
+   ```
+
+2. **Instal·la l'eina de pre-commit (globalment):**
+   ```powershell
+   pip install pre-commit
+   ```
+
+3. **Activa els hooks al repositori:**
+   ```powershell
+   pre-commit install
+   ```
+
+4. **Verificació manual:**
+   Comprova que totes les eines funcionen correctament:
+   ```powershell
+   pre-commit run --all-files
+   ```
+
+---
+
+## 🛡️ Control de Qualitat Automàtic
+
+Cada vegada que intentis fer un `git commit`, el sistema executarà les següents eines:
+
+| Eina | Descripció | Acció en cas de fallada |
+| :--- | :--- | :--- |
+| **Prettier** ✨ | Formata el codi segons l'estil del projecte. | Corregeix el format automàticament. |
+| **ESLint** 🔍 | Busca errors de sintaxi i males pràctiques. | Atura el commit i demana correcció manual. |
+| **Jest** 🧪 | Executa els tests unitaris i d'integració. | El commit falla si algun test no passa. |
+
+
+
+### Com actuar si un commit falla?
+1. Llegeix el missatge d'error a la terminal.
+2. Si **Prettier** ha fet canvis, torna a fer `git add .` per incloure els fitxers formatats.
+3. Si **ESLint** o **Jest** donen errors, corregeix el codi.
+4. Torna a intentar el `git commit`.
+
+---
+
+## 🆘 Solució de Problemes
+
+### El comando `pre-commit` no es reconeix
+Tanca totes les instàncies de la terminal (i el VS Code) i torna-les a obrir. Si el problema persisteix, revisa que la carpeta `Scripts` de Python estigui al teu PATH de Windows.
+
+### Saltar els controls (Emergències)
+Si necessites fer un commit urgent i saps que el codi està bé malgrat un avís del linter:
+```bash
+git commit -m "missatge" --no-verify
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+### Arreglar el linting automàticament
+Pots intentar que ESLint arregli el que pugui amb:
+```bash
+npm run lint -- --fix
 ```
 
-### iOS
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📁 Estructura del Projecte (Resum)
+* `android/`: Codi font de l'aplicació.
+* `__tests__/`: Suite de tests de Jest.
+* `.eslintrc.js`: Configuració de les regles de l'analitzador.
+* `.prettierrc.js`: Configuració de l'estil de codi.
+* `.pre-commit-config.yaml`: Configuració dels hooks de Git.
