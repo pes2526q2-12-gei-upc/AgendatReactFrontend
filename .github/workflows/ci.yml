@@ -1,0 +1,35 @@
+name: React Backoffice CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test-and-sonar:
+    name: Test and SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codi
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Necessari per a l'historial de SonarCloud
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Instal·lar dependències
+        run: npm install
+
+      - name: Executar Tests amb Cobertura
+        # Generem el fitxer lcov.info que llegirà SonarCloud
+        run: npm test -- --coverage --watchAll=false
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automàtic de GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # El que has de crear tu a Secrets
