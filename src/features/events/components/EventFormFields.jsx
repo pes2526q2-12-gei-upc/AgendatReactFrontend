@@ -1,5 +1,11 @@
 import { Save } from "lucide-react";
-import { SelectField, TextAreaField, TextField } from "@/shared/ui/FormControls/FormControls.jsx";
+import {
+  SearchableMultiSelectField,
+  SearchableSelectField,
+  SelectField,
+  TextAreaField,
+  TextField,
+} from "@/shared/ui/FormControls/FormControls.jsx";
 
 export function EventFormFields({
   form,
@@ -8,6 +14,7 @@ export function EventFormFields({
   comarcas,
   municipis,
   catalogError,
+  fieldErrors = {},
   isSubmitting,
   selectedCategoryIds,
   onChange,
@@ -15,12 +22,13 @@ export function EventFormFields({
   onSubmit,
 }) {
   return (
-    <form className="panel form-grid event-form" onSubmit={onSubmit}>
+    <form className="panel form-grid event-form" noValidate onSubmit={onSubmit}>
       <TextField
         label="Event name"
         name="denomination"
         value={form.denomination}
         required
+        error={fieldErrors.denomination}
         onChange={onChange}
       />
       <TextField label="Subtitle" name="subtitle" value={form.subtitle} onChange={onChange} />
@@ -35,6 +43,7 @@ export function EventFormFields({
         name="url_activity"
         type="url"
         value={form.url_activity}
+        error={fieldErrors.url_activity}
         onChange={onChange}
       />
       <TextField
@@ -42,6 +51,7 @@ export function EventFormFields({
         name="url_ticket"
         type="url"
         value={form.url_ticket}
+        error={fieldErrors.url_ticket}
         onChange={onChange}
       />
       <TextField label="Schedule" name="schedule" value={form.schedule} onChange={onChange} />
@@ -67,6 +77,7 @@ export function EventFormFields({
         name="email"
         type="email"
         value={form.email}
+        error={fieldErrors.email}
         onChange={onChange}
       />
       <TextField
@@ -97,6 +108,7 @@ export function EventFormFields({
         type="datetime-local"
         value={form.start_date}
         required
+        error={fieldErrors.start_date}
         onChange={onChange}
       />
       <TextField
@@ -105,81 +117,54 @@ export function EventFormFields({
         type="datetime-local"
         value={form.end_date}
         required
+        error={fieldErrors.end_date}
         onChange={onChange}
       />
-      {catalogError ? (
-        <>
-          <TextField
-            label="Category IDs"
-            name="category_ids"
-            value={form.category_ids}
-            placeholder="1,2"
-            onChange={onChange}
-          />
-          <TextField
-            label="Provincia ID"
-            name="provincia_id"
-            type="number"
-            value={form.provincia_id}
-            onChange={onChange}
-          />
-          <TextField
-            label="Comarca ID"
-            name="comarca_id"
-            type="number"
-            value={form.comarca_id}
-            onChange={onChange}
-          />
-          <TextField
-            label="Municipi ID"
-            name="municipi_id"
-            type="number"
-            value={form.municipi_id}
-            onChange={onChange}
-          />
-        </>
-      ) : (
-        <>
-          <fieldset className="field field--full checkbox-group">
-            <legend>Categories</legend>
-            {categories.length ? (
-              categories.map((category) => (
-                <label key={category.id}>
-                  <input
-                    type="checkbox"
-                    checked={selectedCategoryIds.includes(Number(category.id))}
-                    onChange={() => onCategoryToggle(category.id)}
-                  />
-                  <span>{category.name ?? category.denomination ?? `Category ${category.id}`}</span>
-                </label>
-              ))
-            ) : (
-              <span>No categories available.</span>
-            )}
-          </fieldset>
-          <SelectField
-            label="Provincia"
-            name="provincia_id"
-            value={form.provincia_id}
-            options={provincias}
-            onChange={onChange}
-          />
-          <SelectField
-            label="Comarca"
-            name="comarca_id"
-            value={form.comarca_id}
-            options={comarcas}
-            onChange={onChange}
-          />
-          <SelectField
-            label="Municipi"
-            name="municipi_id"
-            value={form.municipi_id}
-            options={municipis}
-            onChange={onChange}
-          />
-        </>
-      )}
+      <SearchableMultiSelectField
+        label="Categories"
+        values={selectedCategoryIds}
+        options={categories}
+        disabled={Boolean(catalogError)}
+        emptyLabel="No categories available."
+        searchPlaceholder="Search categories..."
+        fallbackPrefix="Category"
+        onToggle={onCategoryToggle}
+      />
+      <SearchableSelectField
+        label="Provincia"
+        name="provincia_id"
+        value={form.provincia_id}
+        options={provincias}
+        disabled={Boolean(catalogError)}
+        emptyLabel="No provincies available."
+        searchPlaceholder="Search provincies..."
+        fallbackPrefix="Provincia"
+        onChange={onChange}
+      />
+      <SearchableSelectField
+        label="Comarca"
+        name="comarca_id"
+        value={form.comarca_id}
+        options={comarcas}
+        disabled={Boolean(catalogError) || !form.provincia_id}
+        emptyLabel="No comarques available."
+        placeholder={form.provincia_id ? "Select..." : "Select a provincia first"}
+        searchPlaceholder="Search comarques..."
+        fallbackPrefix="Comarca"
+        onChange={onChange}
+      />
+      <SearchableSelectField
+        label="Municipi"
+        name="municipi_id"
+        value={form.municipi_id}
+        options={municipis}
+        disabled={Boolean(catalogError) || !form.provincia_id || !form.comarca_id}
+        emptyLabel="No municipis available."
+        placeholder={form.comarca_id ? "Select..." : "Select a comarca first"}
+        searchPlaceholder="Search municipis..."
+        fallbackPrefix="Municipi"
+        onChange={onChange}
+      />
       <div className="form-actions field--full">
         <button className="button button--primary" disabled={isSubmitting}>
           <Save size={17} />

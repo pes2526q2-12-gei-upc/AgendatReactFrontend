@@ -3,10 +3,26 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
+
+function validateForm(form) {
+  const errors = {};
+
+  if (!form.username.trim()) {
+    errors.username = "Enter your email or username.";
+  }
+
+  if (!form.password) {
+    errors.password = "Enter your password.";
+  }
+
+  return errors;
+}
 
 export function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
@@ -19,11 +35,28 @@ export function LoginPage() {
 
   const handleChange = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setFieldErrors((current) => {
+      if (!current[event.target.name]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+      delete nextErrors[event.target.name];
+      return nextErrors;
+    });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    const nextFieldErrors = validateForm(form);
+
+    if (Object.keys(nextFieldErrors).length) {
+      setFieldErrors(nextFieldErrors);
+      return;
+    }
+
+    setFieldErrors({});
     setIsSubmitting(true);
 
     try {
@@ -41,28 +74,26 @@ export function LoginPage() {
         <Building2 size={28} />
         <h2 id="auth-title">Sign in</h2>
         <p>Use the credentials created after your organization was approved.</p>
-        <form className="stacked-form" onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Email or username</span>
-            <input
-              name="username"
-              autoComplete="username"
-              value={form.username}
-              required
-              onChange={handleChange}
-            />
-          </label>
-          <label className="field">
-            <span>Password</span>
-            <input
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={form.password}
-              required
-              onChange={handleChange}
-            />
-          </label>
+        <form className="stacked-form" noValidate onSubmit={handleSubmit}>
+          <TextField
+            label="Email or username"
+            name="username"
+            autoComplete="username"
+            value={form.username}
+            required
+            error={fieldErrors.username}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            value={form.password}
+            required
+            error={fieldErrors.password}
+            onChange={handleChange}
+          />
           {error ? <p className="form-error">{error}</p> : null}
           <button className="button button--primary button--wide" disabled={isSubmitting}>
             {isSubmitting ? "Signing in..." : "Sign in"}

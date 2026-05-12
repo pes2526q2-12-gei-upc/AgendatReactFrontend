@@ -35,6 +35,53 @@ const initialForm = {
   municipi_id: "",
 };
 
+function isInvalidEmail(value) {
+  return value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isInvalidUrl(value) {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    const url = new URL(value);
+    return !["http:", "https:"].includes(url.protocol);
+  } catch {
+    return true;
+  }
+}
+
+function validateForm(form) {
+  const errors = {};
+
+  if (!String(form.denomination ?? "").trim()) {
+    errors.denomination = "Enter the event name.";
+  }
+
+  if (!form.start_date) {
+    errors.start_date = "Choose the start date and time.";
+  }
+
+  if (!form.end_date) {
+    errors.end_date = "Choose the end date and time.";
+  }
+
+  if (isInvalidEmail(form.email)) {
+    errors.email = "Enter a valid contact email.";
+  }
+
+  if (isInvalidUrl(form.url_activity)) {
+    errors.url_activity = "Enter a valid activity URL starting with http:// or https://.";
+  }
+
+  if (isInvalidUrl(form.url_ticket)) {
+    errors.url_ticket = "Enter a valid ticket URL starting with http:// or https://.";
+  }
+
+  return errors;
+}
+
 function idsFromEvent(event) {
   if (Array.isArray(event.category_ids)) {
     return event.category_ids.join(",");
@@ -74,6 +121,7 @@ export function EventFormPage({ mode }) {
   const [municipis, setMunicipis] = useState([]);
   const [catalogError, setCatalogError] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isLoading, setIsLoading] = useState(isEdit);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -93,9 +141,7 @@ export function EventFormPage({ mode }) {
         }
       } catch {
         if (isActive) {
-          setCatalogError(
-            "Catalog dropdowns could not be loaded. Enter numeric IDs manually.",
-          );
+          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
         }
       }
     }
@@ -155,9 +201,7 @@ export function EventFormPage({ mode }) {
       })
       .catch(() => {
         if (isActive) {
-          setCatalogError(
-            "Catalog dropdowns could not be loaded. Enter numeric IDs manually.",
-          );
+          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
         }
       });
 
@@ -167,14 +211,14 @@ export function EventFormPage({ mode }) {
   }, [catalogError, form.provincia_id]);
 
   useEffect(() => {
-    if (!form.comarca_id || catalogError) {
+    if (!form.provincia_id || !form.comarca_id || catalogError) {
       setMunicipis([]);
       return undefined;
     }
 
     let isActive = true;
     eventsApi
-      .municipis(form.comarca_id)
+      .municipis(form.provincia_id, form.comarca_id)
       .then((payload) => {
         if (isActive) {
           setMunicipis(listFromResponse(payload));
@@ -182,16 +226,14 @@ export function EventFormPage({ mode }) {
       })
       .catch(() => {
         if (isActive) {
-          setCatalogError(
-            "Catalog dropdowns could not be loaded. Enter numeric IDs manually.",
-          );
+          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
         }
       });
 
     return () => {
       isActive = false;
     };
-  }, [catalogError, form.comarca_id]);
+  }, [catalogError, form.comarca_id, form.provincia_id]);
 
   const selectedCategoryIds = useMemo(
     () => normalizeCategoryIds(form.category_ids),
@@ -200,10 +242,32 @@ export function EventFormPage({ mode }) {
 
   const handleChange = (event) => {
     const { name, type, checked, value } = event.target;
-    setForm((current) => ({
-      ...current,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setForm((current) => {
+      const nextForm = {
+        ...current,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      if (name === "provincia_id") {
+        nextForm.comarca_id = "";
+        nextForm.municipi_id = "";
+      }
+
+      if (name === "comarca_id") {
+        nextForm.municipi_id = "";
+      }
+
+      return nextForm;
+    });
+    setFieldErrors((current) => {
+      if (!current[name]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+      delete nextErrors[name];
+      return nextErrors;
+    });
   };
 
   const handleCategoryToggle = (categoryId) => {
@@ -241,6 +305,14 @@ export function EventFormPage({ mode }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+    const nextFieldErrors = validateForm(form);
+
+    if (Object.keys(nextFieldErrors).length) {
+      setFieldErrors(nextFieldErrors);
+      return;
+    }
+
+    setFieldErrors({});
     setIsSubmitting(true);
 
     try {
@@ -286,6 +358,7 @@ export function EventFormPage({ mode }) {
         comarcas={comarcas}
         municipis={municipis}
         catalogError={catalogError}
+        fieldErrors={fieldErrors}
         isSubmitting={isSubmitting}
         selectedCategoryIds={selectedCategoryIds}
         onChange={handleChange}

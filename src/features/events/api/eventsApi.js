@@ -19,6 +19,12 @@ export const eventsApi = {
       body: payload,
     });
   },
+  updatePublicationStatus(code, publicationStatus) {
+    return apiRequest(`/api/backoffice/events/${code}/`, {
+      method: "PATCH",
+      body: { publication_status: publicationStatus },
+    });
+  },
   deleteEvent(code) {
     return apiRequest(`/api/backoffice/events/${code}/`, {
       method: "DELETE",
@@ -40,14 +46,12 @@ export const eventsApi = {
     return apiRequest("/api/categories/");
   },
   provincias() {
-    return apiRequest("/api/provincias/");
+    return apiRequest("/api/provincies/");
   },
   comarcas(provinciaId) {
-    const suffix = provinciaId ? `?provincia_id=${provinciaId}` : "";
-    return apiRequest(`/api/comarcas/${suffix}`);
+    return apiRequest(`/api/provincies/${provinciaId}/comarques/`);
   },
-  municipis(comarcaId) {
-    const suffix = comarcaId ? `?comarca_id=${comarcaId}` : "";
-    return apiRequest(`/api/municipis/${suffix}`);
+  municipis(provinciaId, comarcaId) {
+    return apiRequest(`/api/provincies/${provinciaId}/comarques/${comarcaId}/municipis/`);
   },
 };

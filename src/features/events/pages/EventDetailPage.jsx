@@ -1,4 +1,4 @@
-import { Edit, Trash2 } from "lucide-react";
+import { Archive, Edit, FileText, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EventDetailSummary } from "@/features/events/components/EventDetailSummary.jsx";
@@ -17,6 +17,7 @@ export function EventDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState("");
 
   useEffect(() => {
     let isActive = true;
@@ -61,6 +62,24 @@ export function EventDetailPage() {
     }
   };
 
+  const handlePublicationStatus = async (publicationStatus) => {
+    setUpdatingStatus(publicationStatus);
+    setError("");
+
+    try {
+      const payload = await eventsApi.updatePublicationStatus(code, publicationStatus);
+      setEvent((currentEvent) => ({
+        ...currentEvent,
+        ...(payload ?? {}),
+        publication_status: payload?.publication_status ?? publicationStatus,
+      }));
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setUpdatingStatus("");
+    }
+  };
+
   if (isLoading) {
     return <LoadingState label="Loading event" />;
   }
@@ -73,6 +92,10 @@ export function EventDetailPage() {
     );
   }
 
+  const isDraft = event.publication_status === "draft";
+  const isArchived = event.publication_status === "archived";
+  const canSendToReview = isDraft || isArchived;
+
   return (
     <section className="page-stack">
       <PageHeader
@@ -81,6 +104,39 @@ export function EventDetailPage() {
         description={event.subtitle || event.description || "No description"}
         actions={
           <>
+            {!isDraft ? (
+              <button
+                className="button button--secondary"
+                type="button"
+                disabled={Boolean(updatingStatus)}
+                onClick={() => handlePublicationStatus("draft")}
+              >
+                <FileText size={17} />
+                {updatingStatus === "draft" ? "Updating..." : "Mark draft"}
+              </button>
+            ) : null}
+            {!isArchived ? (
+              <button
+                className="button button--secondary"
+                type="button"
+                disabled={Boolean(updatingStatus)}
+                onClick={() => handlePublicationStatus("archived")}
+              >
+                <Archive size={17} />
+                {updatingStatus === "archived" ? "Updating..." : "Archive"}
+              </button>
+            ) : null}
+            {canSendToReview ? (
+              <button
+                className="button button--secondary"
+                type="button"
+                disabled={Boolean(updatingStatus)}
+                onClick={() => handlePublicationStatus("pending_review")}
+              >
+                <FileText size={17} />
+                {updatingStatus === "pending_review" ? "Updating..." : "Send to review"}
+              </button>
+            ) : null}
             <Link className="button button--primary" to={`/events/${code}/edit`}>
               <Edit size={17} />
               Edit
