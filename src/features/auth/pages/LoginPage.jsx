@@ -1,0 +1,109 @@
+import { ArrowRight, Building2 } from "lucide-react";
+import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
+import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
+
+function validateForm(form) {
+  const errors = {};
+
+  if (!form.username.trim()) {
+    errors.username = "Enter your email or username.";
+  }
+
+  if (!form.password) {
+    errors.password = "Enter your password.";
+  }
+
+  return errors;
+}
+
+export function LoginPage() {
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const destination = location.state?.from?.pathname ?? "/dashboard";
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  const handleChange = (event) => {
+    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setFieldErrors((current) => {
+      if (!current[event.target.name]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+      delete nextErrors[event.target.name];
+      return nextErrors;
+    });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    const nextFieldErrors = validateForm(form);
+
+    if (Object.keys(nextFieldErrors).length) {
+      setFieldErrors(nextFieldErrors);
+      return;
+    }
+
+    setFieldErrors({});
+    setIsSubmitting(true);
+
+    try {
+      await login(form);
+      navigate(destination, { replace: true });
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AuthShell hero>
+        <Building2 size={28} />
+        <h2 id="auth-title">Sign in</h2>
+        <p>Use the credentials created after your organization was approved.</p>
+        <form className="stacked-form" noValidate onSubmit={handleSubmit}>
+          <TextField
+            label="Email or username"
+            name="username"
+            autoComplete="username"
+            value={form.username}
+            required
+            error={fieldErrors.username}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            value={form.password}
+            required
+            error={fieldErrors.password}
+            onChange={handleChange}
+          />
+          {error ? <p className="form-error">{error}</p> : null}
+          <button className="button button--primary button--wide" disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Sign in"}
+            <ArrowRight size={18} />
+          </button>
+        </form>
+        <div className="auth-links">
+          <Link to="/access-request">Request access</Link>
+          <Link to="/password-setup">Set password</Link>
+        </div>
+    </AuthShell>
+  );
+}
