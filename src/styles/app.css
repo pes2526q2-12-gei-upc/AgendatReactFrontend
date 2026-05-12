@@ -188,7 +188,7 @@ a {
 }
 
 .auth-hero {
-  align-content: end;
+  align-content: center;
   color: #ffffff;
   display: grid;
   max-width: 720px;
