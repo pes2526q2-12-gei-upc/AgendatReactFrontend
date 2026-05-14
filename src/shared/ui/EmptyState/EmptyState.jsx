@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export function EmptyState({ title, description, action }) {
   return (
     <div className="empty-state">
@@ -7,3 +9,9 @@ export function EmptyState({ title, description, action }) {
     </div>
   );
 }
+
+EmptyState.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  action: PropTypes.node,
+};

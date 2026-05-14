@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { StatusBadge } from "@/shared/ui/StatusBadge/StatusBadge.jsx";
 import {
@@ -28,3 +29,18 @@ export function EventList({ events }) {
     </div>
   );
 }
+
+EventList.propTypes = {
+  events: PropTypes.arrayOf(
+    PropTypes.shape({
+      code: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      denomination: PropTypes.string,
+      title: PropTypes.string,
+      subtitle: PropTypes.string,
+      description: PropTypes.string,
+      publication_status: PropTypes.string,
+      free: PropTypes.bool,
+    }),
+  ).isRequired,
+};

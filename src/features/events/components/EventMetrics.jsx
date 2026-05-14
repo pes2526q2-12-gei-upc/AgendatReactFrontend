@@ -1,4 +1,5 @@
 import { CalendarCheck, Eye, MousePointerClick, Share2, Star } from "lucide-react";
+import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
@@ -163,3 +164,8 @@ export function EventMetrics({ code, showFilters = false }) {
     </>
   );
 }
+
+EventMetrics.propTypes = {
+  code: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  showFilters: PropTypes.bool,
+};

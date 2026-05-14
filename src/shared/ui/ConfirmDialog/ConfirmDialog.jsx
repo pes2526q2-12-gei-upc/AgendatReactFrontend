@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useEffect, useRef } from "react";
 
 export function ConfirmDialog({
@@ -40,13 +41,19 @@ export function ConfirmDialog({
   };
 
   return (
-    <div className="dialog-backdrop" role="presentation" onClick={handleBackdropClick}>
+    <div className="dialog-backdrop">
+      <button
+        className="dialog-backdrop__button"
+        type="button"
+        aria-label={cancelLabel}
+        disabled={isBusy}
+        onClick={handleBackdropClick}
+      />
       <section
         className="dialog"
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <h2 id="dialog-title">{title}</h2>
         <p>{description}</p>
@@ -73,3 +80,14 @@ export function ConfirmDialog({
     </div>
   );
 }
+
+ConfirmDialog.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  confirmLabel: PropTypes.string,
+  cancelLabel: PropTypes.string,
+  isBusy: PropTypes.bool,
+  onCancel: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+};

@@ -1,20 +1,7 @@
 import { Check, ChevronDown, Search, X } from "lucide-react";
+import PropTypes from "prop-types";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-
-function optionValue(option) {
-  return String(option.id ?? option.value ?? "");
-}
-
-export function optionLabel(option, fallbackPrefix = "Option") {
-  return (
-    option.name ??
-    option.label ??
-    option.denomination ??
-    option.title ??
-    option.nom ??
-    `${fallbackPrefix} ${option.id ?? option.value ?? ""}`.trim()
-  );
-}
+import { optionLabel, optionValue } from "@/shared/ui/FormControls/formControlUtils.js";
 
 function createChangeEvent(name, value) {
   return {
@@ -200,6 +187,7 @@ export function SearchableSelectField({
     const handlePointerDown = (event) => {
       if (!containerRef.current?.contains(event.target)) {
         setIsOpen(false);
+        setQuery("");
       }
     };
 
@@ -210,14 +198,21 @@ export function SearchableSelectField({
   useEffect(() => {
     if (isOpen) {
       searchRef.current?.focus();
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
+
+  const handleToggle = () => {
+    if (isOpen) {
+      setQuery("");
+    }
+
+    setIsOpen((current) => !current);
+  };
 
   const handleSelect = (nextValue) => {
     onChange(createChangeEvent(name, nextValue));
     setIsOpen(false);
+    setQuery("");
   };
 
   const handleClear = (event) => {
@@ -249,7 +244,7 @@ export function SearchableSelectField({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-controls={listboxId}
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={handleToggle}
         >
           <span>{selectedOption ? optionLabel(selectedOption, fallbackPrefix) : placeholder}</span>
           <ChevronDown size={17} aria-hidden="true" />
@@ -350,6 +345,7 @@ export function SearchableMultiSelectField({
     const handlePointerDown = (event) => {
       if (!containerRef.current?.contains(event.target)) {
         setIsOpen(false);
+        setQuery("");
       }
     };
 
@@ -360,10 +356,20 @@ export function SearchableMultiSelectField({
   useEffect(() => {
     if (isOpen) {
       searchRef.current?.focus();
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
+
+  const handleToggle = () => {
+    if (isOpen) {
+      setQuery("");
+    }
+
+    setIsOpen((current) => !current);
+  };
+
+  const handleOptionToggle = (nextValue) => {
+    onToggle(nextValue);
+  };
 
   return (
     <fieldset className="field field--full searchable-select searchable-select--multi" ref={containerRef}>
@@ -380,7 +386,7 @@ export function SearchableMultiSelectField({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-controls={listboxId}
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={handleToggle}
         >
           <span>
             {selectedOptions.length
@@ -419,7 +425,7 @@ export function SearchableMultiSelectField({
                       role="option"
                       aria-selected={isSelected}
                       className="searchable-select__option"
-                      onClick={() => onToggle(nextValue)}
+                      onClick={() => handleOptionToggle(nextValue)}
                     >
                       <span>{optionLabel(option, fallbackPrefix)}</span>
                       {isSelected ? <Check size={16} aria-hidden="true" /> : null}
@@ -454,3 +460,79 @@ export function SearchableMultiSelectField({
     </fieldset>
   );
 }
+
+const optionShape = PropTypes.shape({
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  name: PropTypes.string,
+  label: PropTypes.string,
+  denomination: PropTypes.string,
+  title: PropTypes.string,
+  nom: PropTypes.string,
+});
+
+const fieldValueType = PropTypes.oneOfType([PropTypes.number, PropTypes.string]);
+
+TextField.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: fieldValueType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  type: PropTypes.string,
+  required: PropTypes.bool,
+  placeholder: PropTypes.string,
+  min: fieldValueType,
+  minLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  maxLength: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  step: fieldValueType,
+  autoComplete: PropTypes.string,
+  inputMode: PropTypes.string,
+  error: PropTypes.string,
+};
+
+TextAreaField.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: fieldValueType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  rows: PropTypes.number,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+};
+
+SelectField.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: fieldValueType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(optionShape).isRequired,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+};
+
+SearchableSelectField.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: fieldValueType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  options: PropTypes.arrayOf(optionShape).isRequired,
+  required: PropTypes.bool,
+  error: PropTypes.string,
+  placeholder: PropTypes.string,
+  searchPlaceholder: PropTypes.string,
+  emptyLabel: PropTypes.string,
+  fallbackPrefix: PropTypes.string,
+  disabled: PropTypes.bool,
+};
+
+SearchableMultiSelectField.propTypes = {
+  label: PropTypes.string.isRequired,
+  values: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
+  options: PropTypes.arrayOf(optionShape).isRequired,
+  onToggle: PropTypes.func.isRequired,
+  emptyLabel: PropTypes.string,
+  searchPlaceholder: PropTypes.string,
+  fallbackPrefix: PropTypes.string,
+  disabled: PropTypes.bool,
+};

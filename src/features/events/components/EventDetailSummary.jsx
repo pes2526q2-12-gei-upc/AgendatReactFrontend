@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { StatusBadge } from "@/shared/ui/StatusBadge/StatusBadge.jsx";
 import { eventLocation, formatDateRange } from "@/features/events/utils/events.js";
 
@@ -61,3 +62,22 @@ export function EventDetailSummary({ event }) {
     </>
   );
 }
+
+const eventShape = PropTypes.shape({
+  publication_status: PropTypes.string,
+  free: PropTypes.bool,
+  modality: PropTypes.string,
+  schedule: PropTypes.string,
+  description: PropTypes.string,
+  url_activity: PropTypes.string,
+  url_ticket: PropTypes.string,
+});
+
+EventLink.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string,
+};
+
+EventDetailSummary.propTypes = {
+  event: eventShape.isRequired,
+};

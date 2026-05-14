@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import PropTypes from "prop-types";
 
 const statuses = ["all", "pending_review", "published", "rejected", "archived", "draft"];
 
@@ -28,3 +29,10 @@ export function EventFilters({ query, statusFilter, onQueryChange, onStatusFilte
     </section>
   );
 }
+
+EventFilters.propTypes = {
+  query: PropTypes.string.isRequired,
+  statusFilter: PropTypes.string.isRequired,
+  onQueryChange: PropTypes.func.isRequired,
+  onStatusFilterChange: PropTypes.func.isRequired,
+};

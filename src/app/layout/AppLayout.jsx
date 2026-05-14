@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import logoAgendat from "@/assets/logoAgendat.png";
 
 const navItems = [
@@ -60,11 +60,13 @@ export function AppLayout() {
   return (
     <div className="app-shell">
       {sidebar}
-      <div
-        className="mobile-drawer"
-        data-open={isNavOpen}
-        onClick={() => setIsNavOpen(false)}
-      >
+      <div className="mobile-drawer" data-open={isNavOpen}>
+        <button
+          className="mobile-drawer__backdrop"
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setIsNavOpen(false)}
+        />
         <button
           className="icon-button mobile-drawer__close"
           type="button"
@@ -73,7 +75,7 @@ export function AppLayout() {
         >
           <X size={20} />
         </button>
-        <div onClick={(event) => event.stopPropagation()}>{sidebar}</div>
+        <div className="mobile-drawer__panel">{sidebar}</div>
       </div>
       <div className="app-main">
         <header className="topbar">

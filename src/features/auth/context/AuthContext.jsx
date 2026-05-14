@@ -1,18 +1,19 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { authApi } from "@/features/auth/api/authApi.js";
+import { AuthContext } from "@/features/auth/context/authContextValue.js";
 import { tokenStore } from "@/shared/api/client.js";
-
-const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => tokenStore.get());
   const [profile, setProfile] = useState(null);
-  const [isBootstrapping, setIsBootstrapping] = useState(Boolean(tokenStore.get()));
+  const [isBootstrapping, setIsBootstrapping] = useState(() => Boolean(tokenStore.get()));
 
   const clearSession = useCallback(() => {
     tokenStore.clear();
     setToken(null);
     setProfile(null);
+    setIsBootstrapping(false);
   }, []);
 
   const refreshMe = useCallback(async () => {
@@ -63,13 +64,18 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (!token) {
-      setIsBootstrapping(false);
       return undefined;
     }
 
     let isActive = true;
 
-    refreshMe()
+    authApi
+      .me()
+      .then((data) => {
+        if (isActive) {
+          setProfile(data);
+        }
+      })
       .catch(() => {
         if (isActive) {
           clearSession();
@@ -84,7 +90,7 @@ export function AuthProvider({ children }) {
     return () => {
       isActive = false;
     };
-  }, [clearSession, refreshMe, token]);
+  }, [clearSession, token]);
 
   useEffect(() => {
     window.addEventListener("auth:unauthorized", clearSession);
@@ -120,12 +126,6 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider.");
-  }
-
-  return context;
-}
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};

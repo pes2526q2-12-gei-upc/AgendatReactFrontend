@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { EventFormFields } from "@/features/events/components/EventFormFields.jsx";
@@ -368,3 +369,7 @@ export function EventFormPage({ mode }) {
     </section>
   );
 }
+
+EventFormPage.propTypes = {
+  mode: PropTypes.oneOf(["create", "edit"]).isRequired,
+};

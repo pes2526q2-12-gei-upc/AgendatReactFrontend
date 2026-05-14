@@ -2,7 +2,7 @@ import { ArrowRight, Building2 } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
 
 function validateForm(form) {

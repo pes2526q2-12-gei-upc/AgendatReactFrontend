@@ -1,4 +1,5 @@
 import { Save } from "lucide-react";
+import PropTypes from "prop-types";
 import {
   SearchableMultiSelectField,
   SearchableSelectField,
@@ -174,3 +175,54 @@ export function EventFormFields({
     </form>
   );
 }
+
+const fieldValueType = PropTypes.oneOfType([PropTypes.bool, PropTypes.number, PropTypes.string]);
+
+const formShape = PropTypes.shape({
+  denomination: PropTypes.string,
+  subtitle: PropTypes.string,
+  description: PropTypes.string,
+  url_activity: PropTypes.string,
+  url_ticket: PropTypes.string,
+  schedule: PropTypes.string,
+  modality: PropTypes.string,
+  free: PropTypes.bool,
+  address: PropTypes.string,
+  locality: PropTypes.string,
+  email: PropTypes.string,
+  telephone_locality: PropTypes.string,
+  latitude: fieldValueType,
+  longitude: fieldValueType,
+  start_date: PropTypes.string,
+  end_date: PropTypes.string,
+  provincia_id: fieldValueType,
+  comarca_id: fieldValueType,
+  municipi_id: fieldValueType,
+});
+
+const catalogOptionShape = PropTypes.shape({
+  id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  name: PropTypes.string,
+  label: PropTypes.string,
+  denomination: PropTypes.string,
+  title: PropTypes.string,
+  nom: PropTypes.string,
+});
+
+EventFormFields.propTypes = {
+  form: formShape.isRequired,
+  categories: PropTypes.arrayOf(catalogOptionShape).isRequired,
+  provincias: PropTypes.arrayOf(catalogOptionShape).isRequired,
+  comarcas: PropTypes.arrayOf(catalogOptionShape).isRequired,
+  municipis: PropTypes.arrayOf(catalogOptionShape).isRequired,
+  catalogError: PropTypes.string,
+  fieldErrors: PropTypes.objectOf(PropTypes.string),
+  isSubmitting: PropTypes.bool.isRequired,
+  selectedCategoryIds: PropTypes.arrayOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ).isRequired,
+  onChange: PropTypes.func.isRequired,
+  onCategoryToggle: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};

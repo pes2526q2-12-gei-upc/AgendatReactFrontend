@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import logoAgendat from "@/assets/logoAgendat.png";
 
 export function AuthShell({ children, hero = false, wide = false }) {
@@ -35,3 +36,9 @@ export function AuthShell({ children, hero = false, wide = false }) {
     </main>
   );
 }
+
+AuthShell.propTypes = {
+  children: PropTypes.node.isRequired,
+  hero: PropTypes.bool,
+  wide: PropTypes.bool,
+};

@@ -1,7 +1,7 @@
 import { CalendarCheck, Eye, MousePointerClick, Share2, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import { eventsApi } from "@/features/events/api/eventsApi.js";
 import {
   eventCode,
