@@ -59,6 +59,14 @@ function validateForm(form) {
     errors.denomination = "Enter the event name.";
   }
 
+  if (!form.latitude) {
+    errors.latitude = "Enter the event location latitude.";
+  }
+
+  if (!form.longitude) {
+    errors.longitude = "Enter the event location longitude.";
+  }
+
   if (!form.start_date) {
     errors.start_date = "Choose the start date and time.";
   }
@@ -72,11 +80,13 @@ function validateForm(form) {
   }
 
   if (isInvalidUrl(form.url_activity)) {
-    errors.url_activity = "Enter a valid activity URL starting with http:// or https://.";
+    errors.url_activity =
+      "Enter a valid activity URL starting with http:// or https://.";
   }
 
   if (isInvalidUrl(form.url_ticket)) {
-    errors.url_ticket = "Enter a valid ticket URL starting with http:// or https://.";
+    errors.url_ticket =
+      "Enter a valid ticket URL starting with http:// or https://.";
   }
 
   return errors;
@@ -141,7 +151,9 @@ export function EventFormPage({ mode }) {
         }
       } catch {
         if (isActive) {
-          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
+          setCatalogError(
+            "Catalog lists could not be loaded. Try refreshing the page.",
+          );
         }
       }
     }
@@ -201,7 +213,9 @@ export function EventFormPage({ mode }) {
       })
       .catch(() => {
         if (isActive) {
-          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
+          setCatalogError(
+            "Catalog lists could not be loaded. Try refreshing the page.",
+          );
         }
       });
 
@@ -226,7 +240,9 @@ export function EventFormPage({ mode }) {
       })
       .catch(() => {
         if (isActive) {
-          setCatalogError("Catalog lists could not be loaded. Try refreshing the page.");
+          setCatalogError(
+            "Catalog lists could not be loaded. Try refreshing the page.",
+          );
         }
       });
 
@@ -339,14 +355,18 @@ export function EventFormPage({ mode }) {
         title={isEdit ? "Update event" : "New event"}
         description="Fill the event details exactly as they should be reviewed and published."
         actions={
-          <Link className="button button--secondary" to={isEdit ? `/events/${code}` : "/events"}>
+          <Link
+            className="button button--secondary"
+            to={isEdit ? `/events/${code}` : "/events"}
+          >
             Cancel
           </Link>
         }
       />
       {form.publication_status === "published" ? (
         <p className="notice">
-          Editing a published event sends it back to pending review after saving.
+          Editing a published event sends it back to pending review after
+          saving.
         </p>
       ) : null}
       {catalogError ? <p className="form-error">{catalogError}</p> : null}

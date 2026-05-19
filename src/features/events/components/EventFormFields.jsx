@@ -31,7 +31,12 @@ export function EventFormFields({
         error={fieldErrors.denomination}
         onChange={onChange}
       />
-      <TextField label="Subtitle" name="subtitle" value={form.subtitle} onChange={onChange} />
+      <TextField
+        label="Subtitle"
+        name="subtitle"
+        value={form.subtitle}
+        onChange={onChange}
+      />
       <TextAreaField
         label="Description"
         name="description"
@@ -54,7 +59,12 @@ export function EventFormFields({
         error={fieldErrors.url_ticket}
         onChange={onChange}
       />
-      <TextField label="Schedule" name="schedule" value={form.schedule} onChange={onChange} />
+      <TextField
+        label="Schedule"
+        name="schedule"
+        value={form.schedule}
+        onChange={onChange}
+      />
       <SelectField
         label="Modality"
         name="modality"
@@ -67,11 +77,26 @@ export function EventFormFields({
         ]}
       />
       <label className="toggle-field">
-        <input name="free" type="checkbox" checked={form.free} onChange={onChange} />
+        <input
+          name="free"
+          type="checkbox"
+          checked={form.free}
+          onChange={onChange}
+        />
         <span>Free event</span>
       </label>
-      <TextField label="Address" name="address" value={form.address} onChange={onChange} />
-      <TextField label="Locality" name="locality" value={form.locality} onChange={onChange} />
+      <TextField
+        label="Address"
+        name="address"
+        value={form.address}
+        onChange={onChange}
+      />
+      <TextField
+        label="Locality"
+        name="locality"
+        value={form.locality}
+        onChange={onChange}
+      />
       <TextField
         label="Contact email"
         name="email"
@@ -92,6 +117,8 @@ export function EventFormFields({
         type="number"
         step="any"
         value={form.latitude}
+        error={fieldErrors.latitude}
+        required
         onChange={onChange}
       />
       <TextField
@@ -100,6 +127,8 @@ export function EventFormFields({
         type="number"
         step="any"
         value={form.longitude}
+        required
+        error={fieldErrors.longitude}
         onChange={onChange}
       />
       <TextField
@@ -148,7 +177,9 @@ export function EventFormFields({
         options={comarcas}
         disabled={Boolean(catalogError) || !form.provincia_id}
         emptyLabel="No comarques available."
-        placeholder={form.provincia_id ? "Select..." : "Select a provincia first"}
+        placeholder={
+          form.provincia_id ? "Select..." : "Select a provincia first"
+        }
         searchPlaceholder="Search comarques..."
         fallbackPrefix="Comarca"
         onChange={onChange}
@@ -158,7 +189,9 @@ export function EventFormFields({
         name="municipi_id"
         value={form.municipi_id}
         options={municipis}
-        disabled={Boolean(catalogError) || !form.provincia_id || !form.comarca_id}
+        disabled={
+          Boolean(catalogError) || !form.provincia_id || !form.comarca_id
+        }
         emptyLabel="No municipis available."
         placeholder={form.comarca_id ? "Select..." : "Select a comarca first"}
         searchPlaceholder="Search municipis..."

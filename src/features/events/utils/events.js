@@ -7,7 +7,10 @@ export function eventTitle(event) {
 }
 
 export function eventLocation(event) {
-  return [event?.locality, event?.address].filter(Boolean).join(", ") || "No location";
+  return (
+    [event?.locality, event?.address].filter(Boolean).join(", ") ||
+    "No location"
+  );
 }
 
 export function formatDateRange(event) {
@@ -57,6 +60,10 @@ export function normalizeNumber(value) {
 }
 
 export function normalizeCategoryIds(value) {
+  if (value === "" || value === null || value === undefined || value === "0") {
+    return [];
+  }
+
   if (Array.isArray(value)) {
     return value.map(Number).filter(Number.isFinite);
   }
