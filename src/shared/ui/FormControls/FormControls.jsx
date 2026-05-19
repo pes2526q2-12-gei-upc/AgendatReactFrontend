@@ -5,7 +5,7 @@ function optionValue(option) {
   return String(option.id ?? option.value ?? "");
 }
 
-export function optionLabel(option, fallbackPrefix = "Option") {
+function optionLabel(option, fallbackPrefix = "Option") {
   return (
     option.name ??
     option.label ??
@@ -121,7 +121,15 @@ export function TextAreaField({
   );
 }
 
-export function SelectField({ label, name, value, onChange, options, required = false, error }) {
+export function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  required = false,
+  error,
+}) {
   const errorId = `${name}-error`;
 
   return (
@@ -145,7 +153,10 @@ export function SelectField({ label, name, value, onChange, options, required = 
       >
         <option value="">Select...</option>
         {options.map((option) => (
-          <option key={option.id ?? option.value} value={option.id ?? option.value}>
+          <option
+            key={option.id ?? option.value}
+            value={option.id ?? option.value}
+          >
             {optionLabel(option)}
           </option>
         ))}
@@ -179,7 +190,9 @@ export function SearchableSelectField({
   const searchRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const selectedOption = options.find((option) => optionValue(option) === String(value));
+  const selectedOption = options.find(
+    (option) => optionValue(option) === String(value),
+  );
   const filteredOptions = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
@@ -188,7 +201,9 @@ export function SearchableSelectField({
     }
 
     return options.filter((option) =>
-      String(optionLabel(option, fallbackPrefix)).toLowerCase().includes(normalizedQuery),
+      String(optionLabel(option, fallbackPrefix))
+        .toLowerCase()
+        .includes(normalizedQuery),
     );
   }, [fallbackPrefix, options, query]);
 
@@ -210,14 +225,17 @@ export function SearchableSelectField({
   useEffect(() => {
     if (isOpen) {
       searchRef.current?.focus();
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
 
+  const closeSelect = () => {
+    setQuery("");
+    setIsOpen(false);
+  };
+
   const handleSelect = (nextValue) => {
     onChange(createChangeEvent(name, nextValue));
-    setIsOpen(false);
+    closeSelect();
   };
 
   const handleClear = (event) => {
@@ -249,9 +267,19 @@ export function SearchableSelectField({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-controls={listboxId}
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={() => {
+            if (isOpen) {
+              closeSelect();
+            } else {
+              setIsOpen(true);
+            }
+          }}
         >
-          <span>{selectedOption ? optionLabel(selectedOption, fallbackPrefix) : placeholder}</span>
+          <span>
+            {selectedOption
+              ? optionLabel(selectedOption, fallbackPrefix)
+              : placeholder}
+          </span>
           <ChevronDown size={17} aria-hidden="true" />
         </button>
         {value ? (
@@ -277,7 +305,11 @@ export function SearchableSelectField({
                 onChange={(event) => setQuery(event.target.value)}
               />
             </span>
-            <span className="searchable-select__options" id={listboxId} role="listbox">
+            <span
+              className="searchable-select__options"
+              id={listboxId}
+              role="listbox"
+            >
               {filteredOptions.length ? (
                 filteredOptions.map((option) => {
                   const nextValue = optionValue(option);
@@ -293,7 +325,9 @@ export function SearchableSelectField({
                       onClick={() => handleSelect(nextValue)}
                     >
                       <span>{optionLabel(option, fallbackPrefix)}</span>
-                      {isSelected ? <Check size={16} aria-hidden="true" /> : null}
+                      {isSelected ? (
+                        <Check size={16} aria-hidden="true" />
+                      ) : null}
                     </button>
                   );
                 })
@@ -329,7 +363,9 @@ export function SearchableMultiSelectField({
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const normalizedValues = values.map((selectedValue) => String(selectedValue));
-  const selectedOptions = options.filter((option) => normalizedValues.includes(optionValue(option)));
+  const selectedOptions = options.filter((option) =>
+    normalizedValues.includes(optionValue(option)),
+  );
   const filteredOptions = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
@@ -338,7 +374,9 @@ export function SearchableMultiSelectField({
     }
 
     return options.filter((option) =>
-      String(optionLabel(option, fallbackPrefix)).toLowerCase().includes(normalizedQuery),
+      String(optionLabel(option, fallbackPrefix))
+        .toLowerCase()
+        .includes(normalizedQuery),
     );
   }, [fallbackPrefix, options, query]);
 
@@ -349,6 +387,7 @@ export function SearchableMultiSelectField({
 
     const handlePointerDown = (event) => {
       if (!containerRef.current?.contains(event.target)) {
+        setQuery("");
         setIsOpen(false);
       }
     };
@@ -360,13 +399,19 @@ export function SearchableMultiSelectField({
   useEffect(() => {
     if (isOpen) {
       searchRef.current?.focus();
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
 
+  const closeSelect = () => {
+    setQuery("");
+    setIsOpen(false);
+  };
+
   return (
-    <fieldset className="field field--full searchable-select searchable-select--multi" ref={containerRef}>
+    <fieldset
+      className="field field--full searchable-select searchable-select--multi"
+      ref={containerRef}
+    >
       <legend>{label}</legend>
       <span
         className="searchable-select__control"
@@ -380,7 +425,13 @@ export function SearchableMultiSelectField({
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-controls={listboxId}
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={() => {
+            if (isOpen) {
+              closeSelect();
+            } else {
+              setIsOpen(true);
+            }
+          }}
         >
           <span>
             {selectedOptions.length
@@ -422,7 +473,9 @@ export function SearchableMultiSelectField({
                       onClick={() => onToggle(nextValue)}
                     >
                       <span>{optionLabel(option, fallbackPrefix)}</span>
-                      {isSelected ? <Check size={16} aria-hidden="true" /> : null}
+                      {isSelected ? (
+                        <Check size={16} aria-hidden="true" />
+                      ) : null}
                     </button>
                   );
                 })

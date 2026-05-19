@@ -2,8 +2,11 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
-import { TextAreaField, TextField } from "@/shared/ui/FormControls/FormControls.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
+import {
+  TextAreaField,
+  TextField,
+} from "@/shared/ui/FormControls/FormControls.jsx";
 
 const initialForm = {
   organization_name: "",
@@ -49,7 +52,8 @@ function validateForm(form) {
   }
 
   if (isInvalidUrl(form.website)) {
-    errors.website = "Enter a valid website URL starting with http:// or https://.";
+    errors.website =
+      "Enter a valid website URL starting with http:// or https://.";
   }
 
   return errors;
@@ -64,7 +68,10 @@ export function AccessRequestPage() {
   const { requestAccess } = useAuth();
 
   const handleChange = (event) => {
-    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setForm((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
     setFieldErrors((current) => {
       if (!current[event.target.name]) {
         return current;
@@ -103,68 +110,76 @@ export function AccessRequestPage() {
 
   return (
     <AuthShell wide>
-        <span className="eyebrow">Client access</span>
-        <h1 id="auth-title">Request a backoffice account</h1>
-        <p>Your request will be reviewed by the Agenda&apos;t team before password setup.</p>
-        <form className="form-grid" noValidate onSubmit={handleSubmit}>
-          <TextField
-            label="Organization name"
-            name="organization_name"
-            value={form.organization_name}
-            required
-            error={fieldErrors.organization_name}
-            onChange={handleChange}
-          />
-          <TextField
-            label="Contact name"
-            name="contact_name"
-            value={form.contact_name}
-            required
-            error={fieldErrors.contact_name}
-            onChange={handleChange}
-          />
-          <TextField
-            label="Contact email"
-            name="contact_email"
-            type="email"
-            value={form.contact_email}
-            required
-            error={fieldErrors.contact_email}
-            onChange={handleChange}
-          />
-          <TextField label="Phone" name="phone" value={form.phone} onChange={handleChange} />
-          <TextField
-            label="Website"
-            name="website"
-            type="url"
-            value={form.website}
-            placeholder="https://example.com"
-            error={fieldErrors.website}
-            onChange={handleChange}
-          />
-          <TextAreaField
-            label="Notes"
-            name="notes"
-            value={form.notes}
-            placeholder="Tell us about your organization and events."
-            onChange={handleChange}
-          />
-          {error ? <p className="form-error field--full">{error}</p> : null}
-          {status ? (
-            <p className="form-success field--full">
-              Request submitted with status: <strong>{status}</strong>.
-            </p>
-          ) : null}
-          <div className="form-actions field--full">
-            <Link className="button button--secondary" to="/login">
-              Back to login
-            </Link>
-            <button className="button button--primary" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit request"}
-              <Send size={17} />
-            </button>
-          </div>
-        </form>
+      <span className="eyebrow">Client access</span>
+      <h1 id="auth-title">Request a backoffice account</h1>
+      <p>
+        Your request will be reviewed by the Agenda&apos;t team before password
+        setup.
+      </p>
+      <form className="form-grid" noValidate onSubmit={handleSubmit}>
+        <TextField
+          label="Organization name"
+          name="organization_name"
+          value={form.organization_name}
+          required
+          error={fieldErrors.organization_name}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Contact name"
+          name="contact_name"
+          value={form.contact_name}
+          required
+          error={fieldErrors.contact_name}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Contact email"
+          name="contact_email"
+          type="email"
+          value={form.contact_email}
+          required
+          error={fieldErrors.contact_email}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Phone"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Website"
+          name="website"
+          type="url"
+          value={form.website}
+          placeholder="https://example.com"
+          error={fieldErrors.website}
+          onChange={handleChange}
+        />
+        <TextAreaField
+          label="Notes"
+          name="notes"
+          value={form.notes}
+          placeholder="Tell us about your organization and events."
+          onChange={handleChange}
+        />
+        {error ? <p className="form-error field--full">{error}</p> : null}
+        {status ? (
+          <p className="form-success field--full">
+            Request submitted with status: <strong>{status}</strong>.
+          </p>
+        ) : null}
+        <div className="form-actions field--full">
+          <Link className="button button--secondary" to="/login">
+            Back to login
+          </Link>
+          <button className="button button--primary" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit request"}
+            <Send size={17} />
+          </button>
+        </div>
+      </form>
     </AuthShell>
   );
 }

@@ -169,8 +169,11 @@ a {
 
 .auth-page {
   align-items: stretch;
-  background:
-    linear-gradient(90deg, rgba(31, 41, 51, 0.86), rgba(31, 41, 51, 0.45)),
+  background: linear-gradient(
+      90deg,
+      rgba(31, 41, 51, 0.86),
+      rgba(31, 41, 51, 0.45)
+    ),
     url("https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1800&q=80");
   background-position: center;
   background-size: cover;
@@ -208,6 +211,56 @@ a {
   line-height: 1.55;
   margin: 0;
   max-width: 560px;
+}
+
+.auth-steps {
+  display: grid;
+  gap: 1rem;
+  list-style: none;
+  margin: 2rem 0 0;
+  max-width: 620px;
+  padding: 0;
+}
+
+.auth-steps li {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 38px minmax(0, 1fr);
+}
+
+.auth-steps li > span {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-weight: 900;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.auth-steps strong {
+  color: #ffffff;
+  display: block;
+  line-height: 1.25;
+  margin-bottom: 0.2rem;
+}
+
+.auth-steps p {
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.auth-steps a {
+  border-radius: 6px;
+  color: #ffffff;
+  font-weight: 850;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .auth-panel {

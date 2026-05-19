@@ -1,18 +1,20 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { authApi } from "@/features/auth/api/authApi.js";
+import { AuthContext } from "@/features/auth/context/AuthContextValue.js";
 import { tokenStore } from "@/shared/api/client.js";
-
-const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => tokenStore.get());
   const [profile, setProfile] = useState(null);
-  const [isBootstrapping, setIsBootstrapping] = useState(Boolean(tokenStore.get()));
+  const [hasBootstrapped, setHasBootstrapped] = useState(
+    () => !tokenStore.get(),
+  );
 
   const clearSession = useCallback(() => {
     tokenStore.clear();
     setToken(null);
     setProfile(null);
+    setHasBootstrapped(true);
   }, []);
 
   const refreshMe = useCallback(async () => {
@@ -34,6 +36,8 @@ export function AuthProvider({ children }) {
         await refreshMe();
       } catch {
         setProfile({ user: data.user });
+      } finally {
+        setHasBootstrapped(true);
       }
     },
     [refreshMe],
@@ -61,9 +65,20 @@ export function AuthProvider({ children }) {
     return authApi.requestAccess(payload);
   }, []);
 
+  const requestPasswordReset = useCallback((payload) => {
+    return authApi.requestPasswordReset(payload);
+  }, []);
+
+  const verifyPasswordResetCode = useCallback((payload) => {
+    return authApi.verifyPasswordResetCode(payload);
+  }, []);
+
+  const confirmPasswordReset = useCallback((payload) => {
+    return authApi.confirmPasswordReset(payload);
+  }, []);
+
   useEffect(() => {
     if (!token) {
-      setIsBootstrapping(false);
       return undefined;
     }
 
@@ -77,7 +92,7 @@ export function AuthProvider({ children }) {
       })
       .finally(() => {
         if (isActive) {
-          setIsBootstrapping(false);
+          setHasBootstrapped(true);
         }
       });
 
@@ -98,34 +113,30 @@ export function AuthProvider({ children }) {
       organization: profile?.organization ?? null,
       role: profile?.role ?? null,
       isAuthenticated: Boolean(token),
-      isBootstrapping,
+      isBootstrapping: Boolean(token && !hasBootstrapped),
       login,
       confirmPasswordSetup,
+      confirmPasswordReset,
       requestAccess,
+      requestPasswordReset,
+      verifyPasswordResetCode,
       refreshMe,
       logout: clearSession,
     }),
     [
       clearSession,
+      confirmPasswordReset,
       confirmPasswordSetup,
-      isBootstrapping,
+      hasBootstrapped,
       login,
       profile,
       refreshMe,
       requestAccess,
+      requestPasswordReset,
       token,
+      verifyPasswordResetCode,
     ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider.");
-  }
-
-  return context;
 }

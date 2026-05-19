@@ -2,7 +2,7 @@ import { ArrowRight, Building2 } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
 
 function validateForm(form) {
@@ -34,7 +34,10 @@ export function LoginPage() {
   }
 
   const handleChange = (event) => {
-    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setForm((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
     setFieldErrors((current) => {
       if (!current[event.target.name]) {
         return current;
@@ -71,39 +74,43 @@ export function LoginPage() {
 
   return (
     <AuthShell hero>
-        <Building2 size={28} />
-        <h2 id="auth-title">Sign in</h2>
-        <p>Use the credentials created after your organization was approved.</p>
-        <form className="stacked-form" noValidate onSubmit={handleSubmit}>
-          <TextField
-            label="Email or username"
-            name="username"
-            autoComplete="username"
-            value={form.username}
-            required
-            error={fieldErrors.username}
-            onChange={handleChange}
-          />
-          <TextField
-            label="Password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            value={form.password}
-            required
-            error={fieldErrors.password}
-            onChange={handleChange}
-          />
-          {error ? <p className="form-error">{error}</p> : null}
-          <button className="button button--primary button--wide" disabled={isSubmitting}>
-            {isSubmitting ? "Signing in..." : "Sign in"}
-            <ArrowRight size={18} />
-          </button>
-        </form>
-        <div className="auth-links">
-          <Link to="/access-request">Request access</Link>
-          <Link to="/password-setup">Set password</Link>
-        </div>
+      <Building2 size={28} />
+      <h2 id="auth-title">Sign in</h2>
+      <p>Use the credentials created after your organization was approved.</p>
+      <form className="stacked-form" noValidate onSubmit={handleSubmit}>
+        <TextField
+          label="Email or username"
+          name="username"
+          autoComplete="username"
+          value={form.username}
+          required
+          error={fieldErrors.username}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          value={form.password}
+          required
+          error={fieldErrors.password}
+          onChange={handleChange}
+        />
+        {error ? <p className="form-error">{error}</p> : null}
+        <button
+          className="button button--primary button--wide"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Signing in..." : "Sign in"}
+          <ArrowRight size={18} />
+        </button>
+      </form>
+      <div className="auth-links">
+        <Link to="/access-request">Request access</Link>
+        <Link to="/password-setup">Set password</Link>
+        <Link to="/forgot-password">Forgot password?</Link>
+      </div>
     </AuthShell>
   );
 }

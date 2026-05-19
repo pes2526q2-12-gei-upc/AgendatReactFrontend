@@ -1,14 +1,7 @@
-import {
-  CalendarDays,
-  Home,
-  LogOut,
-  Menu,
-  Plus,
-  X,
-} from "lucide-react";
+import { CalendarDays, Home, LogOut, Menu, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import logoAgendat from "@/assets/logoAgendat.png";
 
 const navItems = [
@@ -89,7 +82,11 @@ export function AppLayout() {
             <strong>{organization?.name ?? "Organization"}</strong>
             <span>{user?.email ?? user?.username ?? "Client workspace"}</span>
           </div>
-          <button className="button button--ghost" type="button" onClick={handleLogout}>
+          <button
+            className="button button--ghost"
+            type="button"
+            onClick={handleLogout}
+          >
             <LogOut size={17} />
             <span>Sign out</span>
           </button>

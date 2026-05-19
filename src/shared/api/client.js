@@ -52,6 +52,13 @@ function errorMessage(payload, fallback) {
   }
 
   if (typeof payload === "string") {
+    if (
+      payload.trim().startsWith("<!DOCTYPE html>") ||
+      payload.trim().startsWith("<html")
+    ) {
+      return fallback;
+    }
+
     return payload;
   }
 
@@ -95,7 +102,9 @@ export async function apiRequest(path, options = {}) {
     method,
     headers,
     body:
-      body === undefined || body instanceof FormData ? body : JSON.stringify(body),
+      body === undefined || body instanceof FormData
+        ? body
+        : JSON.stringify(body),
   });
   const payload = await parseResponse(response);
 

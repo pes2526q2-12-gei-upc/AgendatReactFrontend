@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute.jsx";
 import { AccessRequestPage } from "@/features/auth/pages/AccessRequestPage.jsx";
+import { ForgotPasswordPage } from "@/features/auth/pages/ForgotPasswordPage.jsx";
 import { LoginPage } from "@/features/auth/pages/LoginPage.jsx";
 import { PasswordSetupPage } from "@/features/auth/pages/PasswordSetupPage.jsx";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage.jsx";
@@ -18,13 +19,17 @@ export function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/access-request" element={<AccessRequestPage />} />
       <Route path="/password-setup" element={<PasswordSetupPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/new" element={<EventFormPage mode="create" />} />
           <Route path="/events/:code" element={<EventDetailPage />} />
-          <Route path="/events/:code/edit" element={<EventFormPage mode="edit" />} />
+          <Route
+            path="/events/:code/edit"
+            element={<EventFormPage mode="edit" />}
+          />
           <Route path="/events/:code/metrics" element={<MetricsPage />} />
         </Route>
       </Route>

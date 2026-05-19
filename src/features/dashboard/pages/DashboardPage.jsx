@@ -1,7 +1,13 @@
-import { CalendarCheck, Eye, MousePointerClick, Share2, Star } from "lucide-react";
+import {
+  CalendarCheck,
+  Eye,
+  MousePointerClick,
+  Share2,
+  Star,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "@/features/auth/context/AuthContext.jsx";
+import { useAuth } from "@/features/auth/context/useAuth.js";
 import { eventsApi } from "@/features/events/api/eventsApi.js";
 import {
   eventCode,
@@ -41,7 +47,9 @@ export function DashboardPage() {
       try {
         const eventList = listFromResponse(await eventsApi.events());
         const metricResponses = await Promise.allSettled(
-          eventList.slice(0, 5).map((event) => eventsApi.metrics(eventCode(event))),
+          eventList
+            .slice(0, 5)
+            .map((event) => eventsApi.metrics(eventCode(event))),
         );
         const nextTotals = metricResponses.reduce((accumulator, response) => {
           if (response.status !== "fulfilled") {
@@ -55,7 +63,8 @@ export function DashboardPage() {
               accumulator.ticket_clicks + (responseTotals.ticket_clicks ?? 0),
             shares: accumulator.shares + (responseTotals.shares ?? 0),
             attendance_saves:
-              accumulator.attendance_saves + (responseTotals.attendance_saves ?? 0),
+              accumulator.attendance_saves +
+              (responseTotals.attendance_saves ?? 0),
             reviews: accumulator.reviews + (responseTotals.reviews ?? 0),
           };
         }, zeroTotals);
@@ -109,9 +118,17 @@ export function DashboardPage() {
       {error ? <p className="form-error">{error}</p> : null}
       <div className="metrics-grid">
         <MetricCard label="Views" value={totals.views} icon={Eye} />
-        <MetricCard label="Ticket clicks" value={totals.ticket_clicks} icon={MousePointerClick} />
+        <MetricCard
+          label="Ticket clicks"
+          value={totals.ticket_clicks}
+          icon={MousePointerClick}
+        />
         <MetricCard label="Shares" value={totals.shares} icon={Share2} />
-        <MetricCard label="Saved attendance" value={totals.attendance_saves} icon={CalendarCheck} />
+        <MetricCard
+          label="Saved attendance"
+          value={totals.attendance_saves}
+          icon={CalendarCheck}
+        />
         <MetricCard label="Reviews" value={totals.reviews} icon={Star} />
       </div>
       <div className="dashboard-grid">
@@ -120,7 +137,13 @@ export function DashboardPage() {
             <h2>Publication status</h2>
           </div>
           <div className="status-summary">
-            {["pending_review", "published", "rejected", "archived", "draft"].map((status) => (
+            {[
+              "pending_review",
+              "published",
+              "rejected",
+              "archived",
+              "draft",
+            ].map((status) => (
               <div key={status}>
                 <StatusBadge status={status} />
                 <strong>{statusCounts[status] ?? 0}</strong>
@@ -139,7 +162,9 @@ export function DashboardPage() {
                 <Link key={eventCode(event)} to={`/events/${eventCode(event)}`}>
                   <div>
                     <strong>{eventTitle(event)}</strong>
-                    <span>{formatDateRange(event)} - {eventLocation(event)}</span>
+                    <span>
+                      {formatDateRange(event)} - {eventLocation(event)}
+                    </span>
                   </div>
                   <StatusBadge status={event.publication_status} />
                 </Link>

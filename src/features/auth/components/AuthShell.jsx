@@ -1,4 +1,5 @@
 import logoAgendat from "@/assets/logoAgendat.png";
+import { Link } from "react-router-dom";
 
 export function AuthShell({ children, hero = false, wide = false }) {
   if (!hero) {
@@ -27,7 +28,39 @@ export function AuthShell({ children, hero = false, wide = false }) {
           </div>
         </div>
         <h1>Client performance workspace</h1>
-        <p>Create events, follow publication status, and understand audience signals.</p>
+        <ol className="auth-steps" aria-label="Account setup steps">
+          <li>
+            <span>1</span>
+            <div>
+              <strong>Request access</strong>
+              <p>
+                Go to <Link to="/access-request">Request access</Link> and send
+                your organization details.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>2</span>
+            <div>
+              <strong>Set your password</strong>
+              <p>
+                Use the email code in{" "}
+                <Link to="/password-setup">Set password</Link> to activate the
+                account.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span>3</span>
+            <div>
+              <strong>Sign in</strong>
+              <p>
+                Return here with your email and password to enter the
+                backoffice.
+              </p>
+            </div>
+          </li>
+        </ol>
       </section>
       <section className="auth-panel" aria-labelledby="auth-title">
         {children}

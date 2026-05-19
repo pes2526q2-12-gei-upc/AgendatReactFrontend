@@ -15,6 +15,27 @@ export const authApi = {
       auth: false,
     });
   },
+  requestPasswordReset(payload) {
+    return apiRequest("/api/backoffice/password-reset/request/", {
+      method: "POST",
+      body: payload,
+      auth: false,
+    });
+  },
+  verifyPasswordResetCode(payload) {
+    return apiRequest("/api/backoffice/password-reset/verify/", {
+      method: "POST",
+      body: payload,
+      auth: false,
+    });
+  },
+  confirmPasswordReset(payload) {
+    return apiRequest("/api/backoffice/password-reset/confirm/", {
+      method: "POST",
+      body: payload,
+      auth: false,
+    });
+  },
   login(payload) {
     return apiRequest("/api/users/login/", {
       method: "POST",
