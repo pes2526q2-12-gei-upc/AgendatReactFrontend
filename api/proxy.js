@@ -1,5 +1,33 @@
 /* global process, Buffer */
 
+function normalizeForwardPath(rawPath) {
+  if (Array.isArray(rawPath)) {
+    return rawPath.join("/");
+  }
+
+  return rawPath || "";
+}
+
+function buildTargetUrl(req, backendUrl) {
+  const normalizedBackendUrl = backendUrl.replace(/\/$/, "");
+  const requestUrl = new URL(req.url, "http://localhost");
+  const rewrittenPath = normalizeForwardPath(req.query.path);
+
+  if (rewrittenPath) {
+    requestUrl.searchParams.delete("path");
+
+    const search = requestUrl.searchParams.toString();
+    const normalizedPath = rewrittenPath.startsWith("/")
+      ? rewrittenPath
+      : `/${rewrittenPath}`;
+
+    return `${normalizedBackendUrl}${normalizedPath}${search ? `?${search}` : ""}`;
+  }
+
+  const path = req.url.replace(/^\/api\/proxy/, "");
+  return `${normalizedBackendUrl}${path}`;
+}
+
 export default async function handler(req, res) {
   const backendUrl = process.env.URL_BACKEND;
 
@@ -9,8 +37,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const path = req.url.replace(/^\/api\/proxy/, "");
-  const targetUrl = `${backendUrl}${path}`;
+  const targetUrl = buildTargetUrl(req, backendUrl);
 
   try {
     const response = await fetch(targetUrl, {
