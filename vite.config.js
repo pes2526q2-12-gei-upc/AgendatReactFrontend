@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       "globalThis.__AGENDAT_API_BASE_URL__": JSON.stringify(
-        env.URL_BACKEND || env.VITE_API_BASE_URL || defaultApiBaseUrl,
+        env.VITE_API_BASE_URL || defaultApiBaseUrl,
       ),
     },
   };
