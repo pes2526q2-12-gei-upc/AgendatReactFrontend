@@ -1,9 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/proxy/:path*",
-      "destination": "/api/proxy?path=:path*"
+      "src": "^/api/proxy(?:/(.*))?$",
+      "dest": "http://nattech.fib.upc.edu:40410/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "/index.html"
     }
   ]
 }
