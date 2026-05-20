@@ -1,14 +1,10 @@
-const backendUrl = process.env.URL_BACKEND?.replace(/\/$/, "");
+import { deploymentEnv, routes } from "@vercel/config/v1";
 
-if (!backendUrl) {
-  throw new Error("URL_BACKEND must be defined for Vercel proxy rewrites.");
-}
+const localBackendUrl = process.env.URL_BACKEND?.replace(/\/$/, "");
+const backendUrl = localBackendUrl || deploymentEnv("URL_BACKEND");
 
 export const config = {
   rewrites: [
-    {
-      source: "/api/proxy/:path*",
-      destination: `${backendUrl}/:path*`,
-    },
+    routes.rewrite("/api/proxy/:path*", `${backendUrl}/:path*`),
   ],
 };
