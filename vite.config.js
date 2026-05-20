@@ -7,9 +7,21 @@ export default defineConfig(({ mode }) => {
 
   const defaultApiBaseUrl =
     mode === "development" ? "http://localhost:8080" : "";
+  const devProxyTarget = env.URL_BACKEND?.replace(/\/$/, "");
 
   return {
     plugins: [react()],
+    server: devProxyTarget
+      ? {
+          proxy: {
+            "/api/proxy": {
+              target: env.URL_BACKEND,
+              changeOrigin: true,
+              rewrite: (path) => path.replace(/^\/api\/proxy/, ""),
+            },
+          },
+        }
+      : undefined,
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
