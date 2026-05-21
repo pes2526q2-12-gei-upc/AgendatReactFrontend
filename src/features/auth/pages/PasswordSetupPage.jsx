@@ -3,6 +3,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
+import {
+  getSavedOrganizationLogin,
+  saveOrganizationLogin,
+} from "@/features/auth/utils/organizationLogin.js";
 import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
 
 function isInvalidEmail(value) {
@@ -11,6 +15,10 @@ function isInvalidEmail(value) {
 
 function validateForm(form) {
   const errors = {};
+
+  if (!form.organizationName.trim()) {
+    errors.organizationName = "Enter your organization name.";
+  }
 
   if (!form.email.trim()) {
     errors.email = "Enter your email.";
@@ -41,19 +49,22 @@ function validateForm(form) {
 
 function createPasswordSetupPayload(form) {
   return {
-    email: form.email,
-    code: form.code,
+    username: form.organizationName.trim(),
+    organization_name: form.organizationName.trim(),
+    email: form.email.trim(),
+    code: form.code.trim(),
     new_password: form.new_password,
   };
 }
 
 export function PasswordSetupPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(() => ({
+    organizationName: getSavedOrganizationLogin(),
     email: "",
     code: "",
     new_password: "",
     confirm_new_password: "",
-  });
+  }));
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,7 +101,9 @@ export function PasswordSetupPage() {
     setIsSubmitting(true);
 
     try {
-      await confirmPasswordSetup(createPasswordSetupPayload(form));
+      const payload = createPasswordSetupPayload(form);
+      saveOrganizationLogin(payload.username);
+      await confirmPasswordSetup(payload);
       navigate("/dashboard", { replace: true });
     } catch (requestError) {
       setError(requestError.message);
@@ -103,8 +116,19 @@ export function PasswordSetupPage() {
     <AuthShell>
       <KeyRound size={30} />
       <h1 id="auth-title">Set your password</h1>
-      <p>Enter the 6-digit approval code sent to your email.</p>
+      <p>
+        Enter your organization name and the 6-digit approval code sent to your
+        email.
+      </p>
       <form className="stacked-form" noValidate onSubmit={handleSubmit}>
+        <TextField
+          label="Organization name"
+          name="organizationName"
+          value={form.organizationName}
+          required
+          error={fieldErrors.organizationName}
+          onChange={handleChange}
+        />
         <TextField
           label="Email"
           name="email"
