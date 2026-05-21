@@ -3,6 +3,10 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
+import {
+  getSavedOrganizationLogin,
+  saveOrganizationLogin,
+} from "@/features/auth/utils/organizationLogin.js";
 import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
 
 function validateForm(form) {
@@ -20,7 +24,10 @@ function validateForm(form) {
 }
 
 export function LoginPage() {
-  const [form, setForm] = useState({ organizationName: "", password: "" });
+  const [form, setForm] = useState(() => ({
+    organizationName: getSavedOrganizationLogin(),
+    password: "",
+  }));
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,8 +70,10 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
+      const organizationName = form.organizationName.trim();
+      saveOrganizationLogin(organizationName);
       await login({
-        username: form.organizationName.trim(),
+        username: organizationName,
         password: form.password,
       });
       navigate(destination, { replace: true });

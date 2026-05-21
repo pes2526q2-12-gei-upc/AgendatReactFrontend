@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
+import { saveOrganizationLogin } from "@/features/auth/utils/organizationLogin.js";
 import {
   TextAreaField,
   TextField,
@@ -111,7 +112,9 @@ export function AccessRequestPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await requestAccess(createAccessRequestPayload(form));
+      const payload = createAccessRequestPayload(form);
+      const response = await requestAccess(payload);
+      saveOrganizationLogin(payload.username);
       setStatus(response?.status ?? "pending");
       setForm(initialForm);
     } catch (requestError) {
