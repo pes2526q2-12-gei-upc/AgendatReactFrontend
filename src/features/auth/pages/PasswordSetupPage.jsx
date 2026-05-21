@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
+import { buildOrganizationIdentityFields } from "@/features/auth/utils/organizationIdentity.js";
 import {
   getSavedOrganizationLogin,
   saveOrganizationLogin,
@@ -48,9 +49,12 @@ function validateForm(form) {
 }
 
 function createPasswordSetupPayload(form) {
+  const organizationIdentity = buildOrganizationIdentityFields(
+    form.organizationName,
+  );
+
   return {
-    username: form.organizationName.trim(),
-    organization_name: form.organizationName.trim(),
+    ...organizationIdentity,
     email: form.email.trim(),
     code: form.code.trim(),
     new_password: form.new_password,

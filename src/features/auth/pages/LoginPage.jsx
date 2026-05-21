@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
+import { buildOrganizationIdentityFields } from "@/features/auth/utils/organizationIdentity.js";
 import {
   getSavedOrganizationLogin,
   saveOrganizationLogin,
@@ -73,7 +74,7 @@ export function LoginPage() {
       const organizationName = form.organizationName.trim();
       saveOrganizationLogin(organizationName);
       await login({
-        username: organizationName,
+        ...buildOrganizationIdentityFields(organizationName),
         password: form.password,
       });
       navigate(destination, { replace: true });
