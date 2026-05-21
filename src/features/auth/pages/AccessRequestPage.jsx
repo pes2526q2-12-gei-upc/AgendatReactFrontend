@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthShell } from "@/features/auth/components/AuthShell.jsx";
 import { useAuth } from "@/features/auth/context/useAuth.js";
-import { buildOrganizationIdentityFields } from "@/features/auth/utils/organizationIdentity.js";
 import { saveOrganizationLogin } from "@/features/auth/utils/organizationLogin.js";
 import {
   TextAreaField,
@@ -62,15 +61,13 @@ function validateForm(form) {
 }
 
 function createAccessRequestPayload(form) {
-  const organizationIdentity = buildOrganizationIdentityFields(
-    form.organization_name,
-  );
+  const organizationName = form.organization_name.trim();
 
   return {
-    ...form,
-    ...organizationIdentity,
-    contact_name: form.contact_name.trim(),
-    contact_email: form.contact_email.trim(),
+    username: organizationName,
+    first_name: form.contact_name.trim(),
+    last_name: "",
+    email: form.contact_email.trim(),
     phone: form.phone.trim(),
     website: form.website.trim(),
     notes: form.notes.trim(),
