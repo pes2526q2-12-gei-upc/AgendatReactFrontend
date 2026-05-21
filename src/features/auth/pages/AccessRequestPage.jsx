@@ -61,10 +61,8 @@ function validateForm(form) {
 }
 
 function createAccessRequestPayload(form) {
-  const organizationName = form.organization_name.trim();
-
   return {
-    username: organizationName,
+    username: form.organization_name,
     first_name: form.contact_name.trim(),
     last_name: "",
     email: form.contact_email.trim(),
