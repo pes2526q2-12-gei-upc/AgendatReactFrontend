@@ -59,6 +59,19 @@ function validateForm(form) {
   return errors;
 }
 
+function createAccessRequestPayload(form) {
+  return {
+    ...form,
+    organization_name: form.organization_name.trim(),
+    username: form.organization_name.trim(),
+    contact_name: form.contact_name.trim(),
+    contact_email: form.contact_email.trim(),
+    phone: form.phone.trim(),
+    website: form.website.trim(),
+    notes: form.notes.trim(),
+  };
+}
+
 export function AccessRequestPage() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState(null);
@@ -98,7 +111,7 @@ export function AccessRequestPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await requestAccess(form);
+      const response = await requestAccess(createAccessRequestPayload(form));
       setStatus(response?.status ?? "pending");
       setForm(initialForm);
     } catch (requestError) {

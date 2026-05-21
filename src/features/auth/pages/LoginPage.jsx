@@ -8,8 +8,8 @@ import { TextField } from "@/shared/ui/FormControls/FormControls.jsx";
 function validateForm(form) {
   const errors = {};
 
-  if (!form.username.trim()) {
-    errors.username = "Enter your email or username.";
+  if (!form.organizationName.trim()) {
+    errors.organizationName = "Enter your organization name.";
   }
 
   if (!form.password) {
@@ -20,7 +20,7 @@ function validateForm(form) {
 }
 
 export function LoginPage() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ organizationName: "", password: "" });
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,7 +63,10 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await login(form);
+      await login({
+        username: form.organizationName.trim(),
+        password: form.password,
+      });
       navigate(destination, { replace: true });
     } catch (requestError) {
       setError(requestError.message);
@@ -75,16 +78,16 @@ export function LoginPage() {
   return (
     <AuthShell hero>
       <Building2 size={28} />
-      <h2 id="auth-title">Sign in</h2>
-      <p>Use the credentials created after your organization was approved.</p>
+      <h2 id="auth-title">Sign In</h2>
+      <p>Sign in with your organization name and password.</p>
       <form className="stacked-form" noValidate onSubmit={handleSubmit}>
         <TextField
-          label="Email or username"
-          name="username"
+          label="Organization Name"
+          name="organizationName"
           autoComplete="username"
-          value={form.username}
+          value={form.organizationName}
           required
-          error={fieldErrors.username}
+          error={fieldErrors.organizationName}
           onChange={handleChange}
         />
         <TextField
