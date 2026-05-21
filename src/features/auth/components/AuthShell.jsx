@@ -55,8 +55,8 @@ export function AuthShell({ children, hero = false, wide = false }) {
             <div>
               <strong>Sign in</strong>
               <p>
-                Return here with your email and password to enter the
-                backoffice.
+                Return here with your organization name and password to enter
+                the backoffice.
               </p>
             </div>
           </li>
