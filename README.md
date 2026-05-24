@@ -1,81 +1,133 @@
-# Agendat - Backoffice Frontend
+<div align="center">
+  <img src="https://s3.eu-south-2.amazonaws.com/agendat.s3/logoAgendatNoFondo.png" alt="Logo d'Agenda't" width="140">
+  <h1>Agenda't Backoffice Frontend</h1>
+  <p>
+    Frontend web del backoffice d'Agenda't per a organitzacions i negocis privats
+    que publiquen esdeveniments, en gestionen l'estat i en consulten les mètriques.
+  </p>
+</div>
 
-Aquest repositori conté el **panell d'administració web** desenvolupat amb **React** i **Vite**. Aquesta aplicació permet la gestió integral de dades i usuaris del sistema des del navegador
+## Què És El Backoffice
 
-Autors:
+Aquest repositori conté l'aplicació web interna que fan servir les organitzacions
+clients d'Agenda't. El backoffice no és l'app pública per descobrir esdeveniments,
+sinó l'espai privat on una empresa o entitat pot:
 
-- Jordi Abelló --- jordi.abello.sunyer@estudiantat.upc.edu
-- Àngela Buxó --- angela.buxo@estudiantat.upc.edu
-- Noel Freire --- noel.freire@estudiantat.upc.edu
-- Sergi Galan --- sergi.galan.soler@estudiantat.upc.edu
-- Paula Mas --- paula.mas.pascual@estudiantat.upc.edu
-- Pol Montanera --- pol.montanera@estudiantat.upc.edu
-- Víctor Rocha --- victor.rocha@estudiantat.upc.edu
+- demanar accés a la plataforma
+- crear i editar esdeveniments propis
+- enviar esdeveniments a revisió
+- arxivar o eliminar esdeveniments
+- veure el rendiment de cada esdeveniment amb mètriques i sèries temporals
 
----
+En conjunt, el backoffice serveix perquè els negocis puguin publicar la seva
+activitat dins l'ecosistema d'Agenda't i entendre quin impacte tenen els seus
+esdeveniments sobre l'audiència.
 
-## 📋 Requisits Previs
+## Funcionalitats Principals
 
-### 1. Node.js (Motor de JS)
+- Dashboard amb resum de l'activitat recent i dels estats de publicació
+- Autenticació per a clients amb login, alta inicial de contrasenya i recuperació de compte
+- Formulari de `request access` per a noves organitzacions
+- Creació i edició d'esdeveniments amb dades descriptives, ubicació, dates i categories
+- Flux de publicació amb estats com `draft`, `pending_review`, `published`, `rejected` i `archived`
+- Vista detallada per esdeveniment amb accions de gestió
+- Mètriques per esdeveniment: visualitzacions, clics a entrades, comparticions, guardats i ressenyes
+- Gràfiques d'activitat diària i mitjanes de valoració
 
-- Descarrega la versió **LTS** a [nodejs.org](https://nodejs.org/).
-- Comprova la instal·lació: `node -v` i `npm -v`.
+## Stack
 
-### 2. Python (Gestor de Qualitat)
+- React 19
+- Vite 7
+- React Router 7
+- Recharts
+- ESLint
+- Jest
 
-- Necessari per executar les eines de `pre-commit`.
-- Descarrega l'instal·lador oficial a [Python.org](https://www.python.org/downloads/).
-- **Molt important:** Activa la casella **"Add Python to PATH"** durant la instal·lació.
+## Connexió Amb El Backend
 
----
+Aquesta aplicació consumeix els endpoints de backoffice del repositori backend
+d'Agenda't, principalment sota `/api/backoffice/...`.
 
-## 🛠️ Configuració del Projecte
+Per defecte, en desenvolupament es fa servir el backend de:
 
-1. **Instal·la les dependències de Node:**
-   ```bash
-   npm install
-   ```
-2. **Instal·la l'eina de pre-commit:**
-   ```bash
-   pip install pre-commit
-   ```
-3. **Activa els hooks al repositori:**
-   ```Bash
-   pre-commit install
-   ```
-4. **Execució en desenvolupament:**
-   ```bash
-   npm run dev
-   ```
+- `http://localhost:8080`
 
----
+Si vols connectar-la a un altre entorn, crea un fitxer `.env.local` amb:
 
-## 🛡️ Control de Qualitat i CI/CD
+```bash
+VITE_API_BASE_URL=http://nattech.fib.upc.edu:40410
+```
 
-### Local (Pre-commit)
+El backend de producció és a:
 
-Cada vegada que facis un `git commit`, s'executaran automàticament:
+- `http://nattech.fib.upc.edu:40410/`
 
-- **Prettier:** Formata el codi
-- **ESLint:** Busca errors de sintaxi i estil.
-- **Jest:** Executa els tests unitaris.
 
-### Al núvol (GitHub Actions + SonarCloud)
 
-Quan s'obre un `Pull Request`, es dispara una pipeline automàtica:
+## Posada En Marxa
 
-1. **Tests:** S'executen tots els tests de la carpeta `__tests__/`. Si algun falla, el procés s'atura.
+### 1. Instal·la dependències
 
-2. **SonarCloud:** Si els tests passen, s'analitza el codi per detectar bugs i vulnerabilitats.
+```bash
+npm install
+```
 
-**Atenció:** No es pot fer merge de cap codi que no passi els tests o que no compleixi el Quality Gate de SonarCloud.
+### 2. Arrenca el backend
 
----
+Des del repositori `Agendat-backend`:
 
-## 📁 Estructura del Projecte (Resum)
+```bash
+docker compose up --build -d
+```
 
-- `src/`: Codi font de l'aplicació.
+### 3. Executa el frontend
 
-- `__tests__/`: Suite de tests de Jest.
+```bash
+npm run dev
+```
 
-- `public/`: Assets estàtics (imatges, favicon).
+Per defecte, Vite arrencarà en local i la UI es connectarà al backend configurat.
+
+## Scripts Disponibles
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+npm test
+npm run test:coverage
+```
+
+## Estructura Del Projecte
+
+- `src/app`: bootstrap, layout global i rutes
+- `src/features/auth`: login, accés, activació de compte i recuperació de contrasenya
+- `src/features/dashboard`: resum executiu del backoffice
+- `src/features/events`: CRUD d'esdeveniments, detall, filtres i mètriques
+- `src/shared`: client API i components reutilitzables
+- `__tests__`: tests automatitzats
+
+## Flux Funcional
+
+1. Una organització demana accés al backoffice.
+2. L'equip d'Agenda't valida la sol·licitud i activa el compte.
+3. El client entra al backoffice i crea o actualitza esdeveniments.
+4. Cada esdeveniment passa pel seu cicle de publicació (`draft`, `pending_review`, `published/rejected`, `archived`)
+5. Un cop publicat, el client pot consultar mètriques d'interacció i valoracions.
+
+## Contribucions
+
+Si vols contribuir al projecte, treballa sobre una branca nova:
+
+1. Fes `pull` de `develop`.
+2. Crea una branca descriptiva.
+3. Executa `npm install`.
+4. Verifica el canvi amb `npm run lint` i `npm test`.
+5. Obre una pull request amb una descripció clara del canvi.
+
+Abans d'enviar una contribució, assegura't que:
+
+- no hi ha secrets o credencials dins del codi o dels fitxers d'entorn
+- la documentació continua reflectint el comportament real del backoffice
+- el frontend continua connectant correctament amb els endpoints del backend
