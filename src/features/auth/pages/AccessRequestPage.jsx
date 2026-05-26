@@ -62,10 +62,9 @@ function validateForm(form) {
 
 function createAccessRequestPayload(form) {
   return {
-    username: form.organization_name,
-    first_name: form.contact_name.trim(),
-    last_name: "",
-    email: form.contact_email.trim(),
+    organization_name: form.organization_name.trim(),
+    contact_name: form.contact_name.trim(),
+    contact_email: form.contact_email.trim(),
     phone: form.phone.trim(),
     website: form.website.trim(),
     notes: form.notes.trim(),
@@ -113,7 +112,7 @@ export function AccessRequestPage() {
     try {
       const payload = createAccessRequestPayload(form);
       const response = await requestAccess(payload);
-      saveOrganizationLogin(payload.username);
+      saveOrganizationLogin(payload.organization_name);
       setStatus(response?.status ?? "pending");
       setForm(initialForm);
     } catch (requestError) {
