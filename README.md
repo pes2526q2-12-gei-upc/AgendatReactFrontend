@@ -5,6 +5,9 @@
     Frontend web del backoffice d'Agenda't per a organitzacions i negocis privats
     que publiquen esdeveniments, en gestionen l'estat i en consulten les mètriques.
   </p>
+  <p align="center">
+    <a href="https://agendat-react-frontend-dn98.vercel.app/dashboard"><strong>Link al backoffice</strong></a>
+  </p>
 </div>
 
 ## Què És El Backoffice
